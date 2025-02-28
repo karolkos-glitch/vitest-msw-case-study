@@ -6,7 +6,7 @@ export interface FormData {
 }
 
 export const CreacteInvoiceRecordForm = ({
-  invoiceTypes,
+  invoiceTypes = [],
   onSubmit,
 }: {
   onSubmit: (formData: FormData) => void;

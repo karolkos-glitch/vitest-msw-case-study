@@ -18,7 +18,10 @@ export const InvoiceRecordsContainer = () => {
   useEffect(() => {
     const fetchInvoiceTypes = async () => {
       try {
-        const { data } = await axios.get<InvoiceType[]>("/api/invoice-types");
+        const { data } = await axios.get<InvoiceType[]>(
+          "http://localhost:3000/api/invoice-types"
+        );
+
         setInvoiceTypes(data);
       } catch (err) {
         setError({
@@ -50,7 +53,7 @@ export const InvoiceRecordsContainer = () => {
     );
   }
 
-  if (invoiceTypes)
+  if (invoiceTypes.length > 1)
     return (
       <div>
         <h1>Invoice Record Creator App</h1>
@@ -60,4 +63,13 @@ export const InvoiceRecordsContainer = () => {
         />
       </div>
     );
+
+  if (invoiceTypes.length === 0)
+    return (
+      <div>
+        <h1>Invoice Record Creator App</h1>
+        <p>App is not configured well: There is no invoice options</p>
+      </div>
+    );
+  return null;
 };

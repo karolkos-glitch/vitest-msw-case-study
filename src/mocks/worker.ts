@@ -1,6 +1,10 @@
 import { setupWorker } from "msw/browser";
 import { handlers } from "./handlers";
 
-const worker = setupWorker();
-worker.start()
-worker.use(...handlers)
+export const worker = setupWorker();
+
+worker.use(...handlers);
+
+worker.events.on("request:start", ({ request }) => {
+  console.debug("MSW intercepted:", request.method, request.url);
+});

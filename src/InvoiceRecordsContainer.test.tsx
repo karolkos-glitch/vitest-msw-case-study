@@ -1,4 +1,9 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import { InvoiceRecordsContainer } from "./InvoiceRecordsContainer";
 import { server } from "./mocks/node";
 import { http, HttpResponse } from "msw";
@@ -6,6 +11,7 @@ import { http, HttpResponse } from "msw";
 describe("InvoiceRecordsContainer", () => {
   it("shows loading state initially", () => {
     render(<InvoiceRecordsContainer />);
+
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
@@ -19,17 +25,81 @@ describe("InvoiceRecordsContainer", () => {
     });
   });
 
-  it("shows error message when fetch fails", async () => {
+  it("shows error message when fetch fails - 401", async () => {
     server.use(
       http.get("/api/invoice-types", () => {
-        return HttpResponse.error();
+        // return HttpResponse.error();
+        return HttpResponse.json(
+          {
+            message: "Not authorized to see invoice types",
+          },
+          { status: 401 }
+        );
       })
     );
 
     render(<InvoiceRecordsContainer />);
 
-    await waitFor(() => {
-      expect(screen.getByText("Error: Failed to fetch")).toBeInTheDocument();
+    await waitForElementToBeRemoved(() => screen.getByText("Loading..."));
+
+    const errorContent = screen.getByRole("heading", {
+      name: /error: not authorized to see invoice types/i,
     });
+    const errorStatusCodeMessage = screen.getByText(/status code: 401/i);
+
+    expect(errorContent).toBeInTheDocument();
+    expect(errorStatusCodeMessage).toBeInTheDocument();
+  });
+
+  it("shows error message when fetch fails - 500", async () => {
+    server.use(
+      http.get("/api/invoice-types", () => {
+        // return HttpResponse.error();
+        return HttpResponse.json(
+          {
+            message: "Not authorized to see invoice types",
+          },
+          { status: 500 }
+        );
+      })
+    );
+
+    render(<InvoiceRecordsContainer />);
+
+    await waitForElementToBeRemoved(() => screen.getByText("Loading..."));
+
+    const errorContent = screen.getByRole("heading", {
+      name: /error: not authorized to see invoice types/i,
+    });
+    const errorStatusCodeMessage = screen.getByText(/status code: 500/i);
+
+    expect(errorContent).toBeInTheDocument();
+    expect(errorStatusCodeMessage).toBeInTheDocument();
+  });
+
+  it("shows error message when fetch fails - 404", async () => {
+    server.use(
+      http.get("/api/invoice-types", () => {
+        // return HttpResponse.error();
+        return HttpResponse.json(
+          {
+            message: "Not authorized to see invoice types",
+          },
+          { status: 404 }
+        );
+      })
+    );
+
+    render(<InvoiceRecordsContainer />);
+
+    await waitForElementToBeRemoved(() => screen.getByText("Loading..."));
+
+    const errorContent = screen.getByRole("heading", {
+      name: /error: not authorized to see invoice types/i,
+    });
+    const errorStatusCodeMessage = screen.getByText(/status code: 404/i);
+
+    expect(errorContent).toBeInTheDocument();
+    expect(errorStatusCodeMessage).toBeInTheDocument();
   });
 });

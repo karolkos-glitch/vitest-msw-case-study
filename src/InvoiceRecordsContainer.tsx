@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { CreacteInvoiceRecordForm } from "./CreateInvoiceRecordForm";
+import axios, { isAxiosError } from "axios";
 
 interface InvoiceType {
   value: string;
@@ -9,19 +10,23 @@ interface InvoiceType {
 export const InvoiceRecordsContainer = () => {
   const [invoiceTypes, setInvoiceTypes] = useState<InvoiceType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{
+    message: string;
+    statusCode?: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchInvoiceTypes = async () => {
       try {
-        const response = await fetch("/api/invoice-types");
-        if (!response.ok) {
-          throw new Error("Failed to fetch invoice types");
-        }
-        const data = await response.json();
+        const { data } = await axios.get<InvoiceType[]>("/api/invoice-types");
         setInvoiceTypes(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setError({
+          message: isAxiosError(err)
+            ? err.response?.data?.message
+            : "An error occurred",
+          statusCode: isAxiosError(err) ? String(err.status) : undefined,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -37,16 +42,22 @@ export const InvoiceRecordsContainer = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div>
+        <h1>Error: {error.message}</h1>
+        <p>{error.statusCode ? `Status code: ${error.statusCode}` : null}</p>
+      </div>
+    );
   }
 
-  return (
-    <div>
-      <h1>Invoice Record Creator App</h1>
-      <CreacteInvoiceRecordForm
-        invoiceTypes={invoiceTypes}
-        onSubmit={onSubmit}
-      />
-    </div>
-  );
+  if (invoiceTypes)
+    return (
+      <div>
+        <h1>Invoice Record Creator App</h1>
+        <CreacteInvoiceRecordForm
+          invoiceTypes={invoiceTypes}
+          onSubmit={onSubmit}
+        />
+      </div>
+    );
 };

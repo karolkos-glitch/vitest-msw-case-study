@@ -41,22 +41,32 @@ export const InvoiceRecordsContainer = () => {
   const onSubmit = () => {};
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-xl text-gray-600">Loading...</div>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div>
-        <h1>Error: {error.message}</h1>
-        <p>{error.statusCode ? `Status code: ${error.statusCode}` : null}</p>
+      <div className="p-6 max-w-2xl mx-auto mt-10 bg-red-50 rounded-lg">
+        <h1 className="text-2xl font-bold text-red-700 mb-2">
+          Error: {error.message}
+        </h1>
+        {error.statusCode && (
+          <p className="text-red-600">Status code: {error.statusCode}</p>
+        )}
       </div>
     );
   }
 
   if (invoiceTypes.length > 1)
     return (
-      <div>
-        <h1>Invoice Record Creator App</h1>
+      <div className="p-6 max-w-4xl mx-auto mt-10">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">
+          Invoice Record Creator App
+        </h1>
         <CreacteInvoiceRecordForm
           invoiceTypes={invoiceTypes}
           onSubmit={onSubmit}
@@ -66,10 +76,13 @@ export const InvoiceRecordsContainer = () => {
 
   if (invoiceTypes.length === 0)
     return (
-      <div>
-        <h1>Invoice Record Creator App</h1>
-        <p>App is not configured well: There is no invoice options</p>
+      <div className="p-6 max-w-2xl mx-auto mt-10">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">
+          Invoice Record Creator App
+        </h1>
+        <p className="text-red-600 bg-red-50 p-4 rounded-lg">
+          App is not configured well: There is no invoice options
+        </p>
       </div>
     );
-  return null;
 };

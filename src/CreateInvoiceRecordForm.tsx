@@ -35,7 +35,7 @@ export const CreacteInvoiceRecordForm = ({
   return (
     <form className="invoice-form" onSubmit={handleSubmit}>
       <div>
-        <label htmlFor="invoiceType">Invoice Type:</label>
+        <label htmlFor="invoiceType" className="mr-2">Invoice Type:</label>
         <select
           id="invoiceType"
           name="invoiceType"
@@ -52,7 +52,9 @@ export const CreacteInvoiceRecordForm = ({
       </div>
 
       <div>
-        <label htmlFor="invoiceNumber">Invoice Number:</label>
+        <label htmlFor="invoiceNumber" className="mr-2">
+          Invoice Number:
+        </label>
         <input
           type="text"
           id="invoiceNumber"
@@ -63,7 +65,7 @@ export const CreacteInvoiceRecordForm = ({
         />
       </div>
 
-      <button type="submit">Create Invoice</button>
+      <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm">Create Invoice</button>
     </form>
   );
 };
